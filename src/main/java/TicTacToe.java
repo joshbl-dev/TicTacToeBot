@@ -1,10 +1,15 @@
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.EmbedBuilder;
 
+import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TicTacToe {
+public class TicTacToe implements Serializable {
 
-    private User player;
+    private String playerName;
+    private String playerID;
     private String[][] board;
     private int moveRow;
     private int moveCol;
@@ -22,7 +27,8 @@ public class TicTacToe {
     }
 
     public TicTacToe(User user) {
-        player = user;
+        playerName = user.getName();
+        playerID = user.getId();
         board = new String[3][3];
         possibleMoves = new ArrayList<>();
         for (int i = 0; i < 9; i++)
@@ -34,8 +40,12 @@ public class TicTacToe {
         }
     }
 
-    public User getPlayer() {
-        return player;
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public String getPlayerID() {
+        return playerID;
     }
 
     public int getMoveCol() {
@@ -60,7 +70,6 @@ public class TicTacToe {
                             moveRow = row;
                             moveCol = col;
                             board[moveRow][moveCol] = ":x:";
-                            System.out.println(possibleMoves);
                             possibleMoves.remove(findMoveIndex(moveNum));
                             return true;
                         } else if (row * board.length + col == Integer.parseInt(move))
@@ -82,7 +91,6 @@ public class TicTacToe {
                 if (row * board.length + col == possibleMoves.get(index)) {
                     moveRow = row;
                     moveCol = col;
-                    System.out.println(possibleMoves);
                     possibleMoves.remove(index);
                     board[moveRow][moveCol] = ":o:";
                     return;
@@ -92,7 +100,6 @@ public class TicTacToe {
     }
     
     public boolean checkWin(int row, int col, String symbol) {
-        System.out.println("Checking for win " + symbol);
         // col win
         for (int i = 0; i < board.length; i++) {
             if (!board[i][col].equals(symbol))
@@ -128,7 +135,22 @@ public class TicTacToe {
         return false;
     }
 
-    public String toString() {
+//    public String toString() {
+//        String boardString = "";
+//        for (int row = 0; row < board.length; row++) {
+//            for (int col = 0; col < board[row].length; col++) {
+//                boardString += board[row][col];
+//            }
+//            boardString += "\n";
+//        }
+//        boardString = boardString.substring(0, boardString.length() - 1);
+//        return boardString;
+//    }
+
+    public MessageEmbed toEmbed() {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(playerName + "'s TicTacToe Game");
+        eb.setColor(new Color(80, 255, 236));
         String boardString = "";
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
@@ -137,6 +159,9 @@ public class TicTacToe {
             boardString += "\n";
         }
         boardString = boardString.substring(0, boardString.length() - 1);
-        return boardString;
+        eb.addField("", boardString, true);
+        eb.addBlankField(true);
+        eb.addField("", ":x: " + playerName + "\n:o: Mehme", true);
+        return eb.build();
     }
 }
