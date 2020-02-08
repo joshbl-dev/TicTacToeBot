@@ -31,8 +31,10 @@ public class TicTacToe implements Serializable {
         playerID = user.getId();
         board = new String[3][3];
         possibleMoves = new ArrayList<>();
+
         for (int i = 0; i < 9; i++)
             possibleMoves.add(i);
+
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
                 board[row][col] = NUM_TO_EMOJI[row * board.length + col];
@@ -107,6 +109,7 @@ public class TicTacToe implements Serializable {
             else if (i == board.length - 1)
                 return true;
         }
+
         // row win
         for (int i = 0; i < board.length; i++) {
             if (!board[row][i].equals(symbol))
@@ -114,6 +117,7 @@ public class TicTacToe implements Serializable {
             else if (i == board.length - 1)
                 return true;
         }
+
         // col win
         if (row == col) {
             for (int i = 0; i < board.length; i++) {
@@ -123,6 +127,7 @@ public class TicTacToe implements Serializable {
                     return true;
             }
         }
+
         // other col win
         if (row + col == board.length - 1) {
             for (int i = 0; i < board.length; i++) {
@@ -151,17 +156,20 @@ public class TicTacToe implements Serializable {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(playerName + "'s TicTacToe Game");
         eb.setColor(new Color(80, 255, 236));
-        String boardString = "";
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                boardString += board[row][col];
+
+        StringBuilder boardString = new StringBuilder();
+        for (String[] row : board) {
+            for (String cell : row) {
+                boardString.append(cell);
             }
-            boardString += "\n";
+            boardString.append("\n");
         }
-        boardString = boardString.substring(0, boardString.length() - 1);
-        eb.addField("", boardString, true);
+        boardString = new StringBuilder(boardString.substring(0, boardString.length() - 1));
+
+        eb.addField("", boardString.toString(), true);
         eb.addBlankField(true);
         eb.addField("", ":x: " + playerName + "\n:o: Mehme", true);
+
         return eb.build();
     }
 }

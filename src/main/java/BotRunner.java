@@ -8,18 +8,17 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.io.*;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class BotRunner extends ListenerAdapter {
 
     private static ArrayList<TicTacToe> tttGames = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws LoginException {
 //        Scanner s = new Scanner(System.in);
 //        System.out.print("Token: ");
@@ -30,28 +29,28 @@ public class BotRunner extends ListenerAdapter {
         System.out.println("Finished building JDA!");
 
         try {
-            System.out.println("Now loading bot data...");
+            System.out.println("\nNow loading bot data...");
             FileInputStream fileInputStream = new FileInputStream("src/main/MehmeData");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             tttGames = (ArrayList<TicTacToe>) objectInputStream.readObject();
             System.out.println("Loaded " + tttGames.size() + " TicTacToe games");
-            System.out.println("Completed loading bot data!");
+            System.out.println("Completed loading bot data!\n");
         }
         catch (IOException | ClassNotFoundException e) {
             System.out.println(e.toString());
         }
 
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool ( 1 );
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool (1);
         Runnable saveDataRunnable = () -> {
             try {
-                System.out.println("Now saving bot data...");
+                System.out.println("\nNow saving bot data...");
                 FileOutputStream fileOutputStream = new FileOutputStream("src/main/MehmeData");
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(tttGames);
                 System.out.println("Saved " + tttGames.size() + " TicTacToe games");
                 objectOutputStream.close();
                 fileOutputStream.close();
-                System.out.println("Completed saving bot data!");
+                System.out.println("Completed saving bot data!\n");
 
             }
             catch(IOException e) {
