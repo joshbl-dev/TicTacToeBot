@@ -18,14 +18,6 @@ public class TicTacToe implements Serializable {
 
     private static final String[] NUM_TO_EMOJI = {":zero:", ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:"};
 
-    private int findMoveIndex(int move) {
-        for (int  i = 0; i < possibleMoves.size(); i++) {
-            if (possibleMoves.get(i) == move)
-                return i;
-        }
-        return -1;
-    }
-
     public TicTacToe(User user) {
         playerName = user.getName();
         playerID = user.getId();
@@ -42,9 +34,7 @@ public class TicTacToe implements Serializable {
         }
     }
 
-    public String getPlayerName() {
-        return playerName;
-    }
+    // accessors
 
     public String getPlayerID() {
         return playerID;
@@ -58,10 +48,21 @@ public class TicTacToe implements Serializable {
         return moveRow;
     }
 
+    // finds index of move in possibleMoves
+    private int findMoveIndex(int move) {
+        for (int  i = 0; i < possibleMoves.size(); i++) {
+            if (possibleMoves.get(i) == move)
+                return i;
+        }
+        return -1;
+    }
+
+    // returns if moves left on board
     public boolean movesLeft() {
         return possibleMoves.size() != 0;
     }
 
+    // plays the user's move
     public boolean playMove(String move) {
         try {
             int moveNum = Integer.parseInt(move);
@@ -86,6 +87,7 @@ public class TicTacToe implements Serializable {
         return false;
     }
 
+    // plays the AI's move (currently random)
     public void moveAI() {
         int index = (int) (Math.random() * possibleMoves.size());
         for (int row = 0; row < board.length; row++) {
@@ -100,7 +102,8 @@ public class TicTacToe implements Serializable {
             }
         }
     }
-    
+
+    // checks for a win
     public boolean checkWin(int row, int col, String symbol) {
         // col win
         for (int i = 0; i < board.length; i++) {
@@ -118,7 +121,7 @@ public class TicTacToe implements Serializable {
                 return true;
         }
 
-        // col win
+        // diag win
         if (row == col) {
             for (int i = 0; i < board.length; i++) {
                 if (!board[i][i].equals(symbol))
@@ -128,7 +131,7 @@ public class TicTacToe implements Serializable {
             }
         }
 
-        // other col win
+        // other diag win
         if (row + col == board.length - 1) {
             for (int i = 0; i < board.length; i++) {
                 if (!board[i][board.length - 1 - i].equals(symbol))
@@ -140,18 +143,7 @@ public class TicTacToe implements Serializable {
         return false;
     }
 
-//    public String toString() {
-//        String boardString = "";
-//        for (int row = 0; row < board.length; row++) {
-//            for (int col = 0; col < board[row].length; col++) {
-//                boardString += board[row][col];
-//            }
-//            boardString += "\n";
-//        }
-//        boardString = boardString.substring(0, boardString.length() - 1);
-//        return boardString;
-//    }
-
+    // returns formatted board for discord output
     public MessageEmbed toEmbed() {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle(playerName + "'s TicTacToe Game");
