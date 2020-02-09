@@ -28,9 +28,7 @@ public class TicTacToe implements Serializable {
             possibleMoves.add(i);
 
         for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                board[row][col] = NUM_TO_EMOJI[row * board.length + col];
-            }
+            System.arraycopy(NUM_TO_EMOJI, row * board.length, board[row], 0, board[row].length);
         }
     }
 
@@ -64,40 +62,44 @@ public class TicTacToe implements Serializable {
 
     // plays the user's move
     public boolean playMove(String move) {
-        try {
-            int moveNum = Integer.parseInt(move);
-            if (moveNum >= 0 && moveNum <= 8) {
-                for (int row = 0; row < board.length; row++) {
-                    for (int col = 0; col < board[row].length; col++) {
-                        if (row * board.length + col == moveNum && !board[row][col].equals(":x:") && !board[row][col].equals(":o:")) {
-                            moveRow = row;
-                            moveCol = col;
-                            board[moveRow][moveCol] = ":x:";
-                            possibleMoves.remove(findMoveIndex(moveNum));
-                            return true;
-                        } else if (row * board.length + col == Integer.parseInt(move))
-                            return false;
+        if (movesLeft()) {
+            try {
+                int moveNum = Integer.parseInt(move);
+                if (moveNum >= 0 && moveNum <= 8) {
+                    for (int row = 0; row < board.length; row++) {
+                        for (int col = 0; col < board[row].length; col++) {
+                            if (row * board.length + col == moveNum && !board[row][col].equals(":x:") && !board[row][col].equals(":o:")) {
+                                moveRow = row;
+                                moveCol = col;
+                                board[moveRow][moveCol] = ":x:";
+                                possibleMoves.remove(findMoveIndex(moveNum));
+                                return true;
+                            }
+                            else if (row * board.length + col == Integer.parseInt(move))
+                                return false;
+                        }
                     }
                 }
+            } catch (NumberFormatException e) {
+                return false;
             }
-        }
-        catch (NumberFormatException e) {
-            return false;
         }
         return false;
     }
 
     // plays the AI's move (currently random)
     public void moveAI() {
-        int index = (int) (Math.random() * possibleMoves.size());
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                if (row * board.length + col == possibleMoves.get(index)) {
-                    moveRow = row;
-                    moveCol = col;
-                    possibleMoves.remove(index);
-                    board[moveRow][moveCol] = ":o:";
-                    return;
+        if (movesLeft()) {
+            int index = (int) (Math.random() * possibleMoves.size());
+            for (int row = 0; row < board.length; row++) {
+                for (int col = 0; col < board[row].length; col++) {
+                    if (row * board.length + col == possibleMoves.get(index)) {
+                        moveRow = row;
+                        moveCol = col;
+                        possibleMoves.remove(index);
+                        board[moveRow][moveCol] = ":o:";
+                        return;
+                    }
                 }
             }
         }
@@ -112,7 +114,6 @@ public class TicTacToe implements Serializable {
             else if (i == board.length - 1)
                 return true;
         }
-
         // row win
         for (int i = 0; i < board.length; i++) {
             if (!board[row][i].equals(symbol))
@@ -120,7 +121,6 @@ public class TicTacToe implements Serializable {
             else if (i == board.length - 1)
                 return true;
         }
-
         // diag win
         if (row == col) {
             for (int i = 0; i < board.length; i++) {
@@ -130,7 +130,6 @@ public class TicTacToe implements Serializable {
                     return true;
             }
         }
-
         // other diag win
         if (row + col == board.length - 1) {
             for (int i = 0; i < board.length; i++) {

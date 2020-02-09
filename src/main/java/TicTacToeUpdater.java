@@ -23,6 +23,7 @@ public class TicTacToeUpdater {
 	}
 
 	// loads all ongoing tictactoe games
+	@SuppressWarnings("unchecked")
 	private void onStart() {
 		try {
 			System.out.println("\nNow loading bot data...");
@@ -72,8 +73,10 @@ public class TicTacToeUpdater {
 	// removes player from the list of ongoing games
 	private void removePlayerBoard(User user) {
 		for (int i = 0; i < tttGames.size(); i++) {
-			if (tttGames.get(i).getPlayerID().equals(user.getId()))
+			if (tttGames.get(i).getPlayerID().equals(user.getId())) {
 				tttGames.remove(i);
+				i--;
+			}
 		}
 	}
 
