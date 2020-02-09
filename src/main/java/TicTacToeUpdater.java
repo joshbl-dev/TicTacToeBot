@@ -113,7 +113,7 @@ public class TicTacToeUpdater {
 		// move
 		else if (messagePhrases.length >= 3 && messagePhrases[1].equals("move")) {
 			if (board == null)
-				channel.sendMessage("No board found for <@" + author.getId() + ">. Create one with the command \"!start ttt\"").queue();
+				channel.sendMessage("No board found for <@" + author.getId() + ">. Create one with the command \"!ttt start\"").queue();
 			else if (!board.movesLeft())
 				channel.sendMessage("No moves remaining in <@" + author.getId() + ">'s TicTacToe game").queue();
 			else if (board.playMove(messagePhrases[2].toLowerCase())) {
@@ -140,12 +140,12 @@ public class TicTacToeUpdater {
 				}
 			}
 			else
-				channel.sendMessage("<@" + author.getId() + "> Invalid syntax or move. Command syntax: \"!move [number]\"").queue();
+				channel.sendMessage("<@" + author.getId() + "> Invalid syntax or move. Command syntax: \"!ttt move [number]\"").queue();
 		}
 		// get
 		else if (messagePhrases.length >= 2 && messagePhrases[1].equals("get")) {
 			if (board == null)
-				channel.sendMessage("No board found for <@" + author.getId() + ">. Create one with the command \"!start ttt\"").queue();
+				channel.sendMessage("No board found for <@" + author.getId() + ">. Create one with the command \"!ttt start\"").queue();
 			else {
 				channel.sendMessage(board.toEmbed()).queue();
 			}
@@ -171,7 +171,7 @@ public class TicTacToeUpdater {
 					taggedMembers = event.getMessage().getMentionedMembers();
 					for (Member member : taggedMembers) {
 						System.out.println("Removing " + member.getEffectiveName() + "'s TicTacToe game");
-						channel.sendMessage("<@" + author.getId() + ">'s TicTacToe game has been removed").queue();
+						channel.sendMessage("<@" + member.getIdLong() + ">'s TicTacToe game has been removed").queue();
 						removePlayerBoard(member.getUser());
 					}
 				}

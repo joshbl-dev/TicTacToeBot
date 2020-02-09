@@ -32,7 +32,7 @@ public class BotRunner extends ListenerAdapter {
             // help command
             if (messagePhrases[0].equals("!help")) {
                 EmbedBuilder eb = new EmbedBuilder();
-                eb.setTitle("Mehme Commands:");
+                eb.setTitle("Mehme Modules:");
                 eb.setColor(new Color(0, 0, 255));
                 eb.addField("**List help modules**", "!help", false);
                 eb.addField("**List TicTacToe commands**", "!ttt help", false);
@@ -50,7 +50,7 @@ public class BotRunner extends ListenerAdapter {
         Member member = event.getMember();
         Guild guild = event.getGuild();
 
-        // adds default role to Diamond Testing Discord server
+        // adds default role to Diamond Elysium Discord server
         List<Role> roles = guild.getRolesByName("Tyro", true);
         if (guild.getName().equals("Diamond Elysium") && roles.size() > 0) {
             System.out.println("Adding role Tyro to " + member.getEffectiveName());
