@@ -2,6 +2,12 @@ plugins {
     id 'java'
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'BotRunner'
+    }
+}
+
 group 'Mehme'
 version '1.0-SNAPSHOT'
 
