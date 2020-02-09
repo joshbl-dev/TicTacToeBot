@@ -114,8 +114,10 @@ public class TicTacToeUpdater {
 		else if (messagePhrases.length >= 3 && messagePhrases[1].equals("move")) {
 			if (board == null)
 				channel.sendMessage("No board found for <@" + author.getId() + ">. Create one with the command \"!ttt start\"").queue();
-			else if (!board.movesLeft())
+			else if (!board.movesLeft()) {
 				channel.sendMessage("No moves remaining in <@" + author.getId() + ">'s TicTacToe game").queue();
+				removePlayerBoard(author);
+			}
 			else if (board.playMove(messagePhrases[2].toLowerCase())) {
 				if (board.checkWin(board.getMoveRow(), board.getMoveCol(), ":x:")) {
 					channel.sendMessage(board.toEmbed()).queue();
@@ -125,6 +127,7 @@ public class TicTacToeUpdater {
 				else if (!board.movesLeft()) {
 					channel.sendMessage(board.toEmbed()).queue();
 					channel.sendMessage("<@" + author.getId() + ">'s TicTacToe game ended in a tie!").queue();
+					removePlayerBoard(author);
 				}
 				else {
 					board.moveAI();
@@ -136,6 +139,7 @@ public class TicTacToeUpdater {
 					else if (!board.movesLeft()) {
 						channel.sendMessage(board.toEmbed()).queue();
 						channel.sendMessage("<@" + author.getId() + ">'s TicTacToe game ended in a tie!").queue();
+						removePlayerBoard(author);
 					}
 				}
 			}

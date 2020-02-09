@@ -68,11 +68,8 @@ public class TicTacToe implements Serializable {
                 if (moveNum >= 0 && moveNum <= 8) {
                     for (int row = 0; row < board.length; row++) {
                         for (int col = 0; col < board[row].length; col++) {
-                            if (row * board.length + col == moveNum && !board[row][col].equals(":x:") && !board[row][col].equals(":o:")) {
-                                moveRow = row;
-                                moveCol = col;
-                                board[moveRow][moveCol] = ":x:";
-                                possibleMoves.remove(findMoveIndex(moveNum));
+                            if (row * board.length + col == moveNum && openSpace(row, col)) {
+                                placeMove(row, col, findMoveIndex(moveNum), ":x:");
                                 return true;
                             }
                             else if (row * board.length + col == Integer.parseInt(move))
@@ -87,18 +84,90 @@ public class TicTacToe implements Serializable {
         return false;
     }
 
+    // returns if open space on board
+    private boolean openSpace(int row, int col) {
+        return !board[row][col].equals(":x:") && !board[row][col].equals(":o:");
+    }
+
+    // places move on board
+    private void placeMove(int row, int col, int index, String symbol) {
+        moveRow = row;
+        moveCol = col;
+        board[moveRow][moveCol] = symbol;
+        possibleMoves.remove(index);
+    }
+
+    // attempts a move in row/col for win
+    private boolean attemptLineMove(String symbol, boolean isCol) {
+        int count;
+        int possibleMoveRow = 0;
+        int possibleMoveCol = 0;
+        for (int i = 0; i < board.length; i++) {
+            count = 0;
+            for (int j = 0; j < board[i].length; j++) {
+                if (isCol && board[i][j].equals(symbol))
+                    count++;
+                else if (!isCol && board[j][i].equals(symbol))
+                    count++;
+                else {
+                    possibleMoveRow = i;
+                    possibleMoveCol = j;
+                }
+                if (count == 2 && j == board[i].length - 1 && openSpace(possibleMoveRow, possibleMoveCol)) {
+                    placeMove(possibleMoveRow, possibleMoveCol, findMoveIndex(possibleMoveRow * board.length + possibleMoveCol), ":o:");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // attempts a move in diagonals for win
+    private boolean attemptDiagMove(String symbol, boolean isDiagNorm) {
+        int count = 0;
+        int possibleMoveRow = 0;
+        int possibleMoveCol = 0;
+        for (int i = 0; i < board.length; i++) {
+            if (isDiagNorm && board[i][i].equals(symbol))
+                count++;
+            else if (!isDiagNorm && board[i][board.length - 1 - i].equals(symbol))
+                count++;
+            else {
+                possibleMoveRow = i;
+                possibleMoveCol = i;
+            }
+            if (count == 2 && i == board.length - 1 && openSpace(possibleMoveRow, possibleMoveCol)) {
+                placeMove(possibleMoveRow, possibleMoveCol, findMoveIndex(possibleMoveRow * board.length + possibleMoveCol), ":o:");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // returns if symbol can win next turn
+    private boolean noNextTurnWin(String symbol) {
+        if (attemptLineMove(symbol, true))
+            return false;
+        else if (attemptLineMove(symbol, false))
+            return false;
+        else if (attemptDiagMove(symbol, true))
+            return false;
+        else
+            return !attemptDiagMove(symbol, false);
+    }
+
     // plays the AI's move (currently random)
     public void moveAI() {
         if (movesLeft()) {
-            int index = (int) (Math.random() * possibleMoves.size());
-            for (int row = 0; row < board.length; row++) {
-                for (int col = 0; col < board[row].length; col++) {
-                    if (row * board.length + col == possibleMoves.get(index)) {
-                        moveRow = row;
-                        moveCol = col;
-                        possibleMoves.remove(index);
-                        board[moveRow][moveCol] = ":o:";
-                        return;
+            if (noNextTurnWin(":o:") && noNextTurnWin(":x:")) {
+                System.out.println("Moving bot randomly...");
+                int index = (int) (Math.random() * possibleMoves.size());
+                for (int row = 0; row < board.length; row++) {
+                    for (int col = 0; col < board[row].length; col++) {
+                        if (row * board.length + col == possibleMoves.get(index)) {
+                            placeMove(row, col, index, ":o:");
+                            return;
+                        }
                     }
                 }
             }
