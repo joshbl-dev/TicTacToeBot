@@ -71,13 +71,15 @@ public class TicTacToeUpdater {
 	}
 
 	// removes player from the list of ongoing games
-	private void removePlayerBoard(User user) {
+	private boolean removePlayerBoard(User user) {
 		for (int i = 0; i < tttGames.size(); i++) {
 			if (tttGames.get(i).getPlayerID().equals(user.getId())) {
 				tttGames.remove(i);
 				i--;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	// tictactoe message commands
@@ -174,9 +176,12 @@ public class TicTacToeUpdater {
 				else {
 					taggedMembers = event.getMessage().getMentionedMembers();
 					for (Member member : taggedMembers) {
-						System.out.println("Removing " + member.getEffectiveName() + "'s TicTacToe game");
-						channel.sendMessage("<@" + member.getIdLong() + ">'s TicTacToe game has been removed").queue();
-						removePlayerBoard(member.getUser());
+						if (removePlayerBoard(member.getUser())) {
+							System.out.println("Removing " + member.getEffectiveName() + "'s TicTacToe game");
+							channel.sendMessage("<@" + member.getIdLong() + ">'s TicTacToe game has been removed").queue();
+						}
+						else
+							channel.sendMessage("No board found for <@" + member.getIdLong() + ">").queue();
 					}
 				}
 			}

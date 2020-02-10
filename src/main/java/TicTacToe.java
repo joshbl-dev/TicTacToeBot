@@ -98,20 +98,26 @@ public class TicTacToe implements Serializable {
     }
 
     // attempts a move in row/col for win
-    private boolean attemptLineMove(String symbol, boolean isCol) {
+    private boolean attemptLineMove(String symbol, boolean isRow) {
         int count;
         int possibleMoveRow = 0;
         int possibleMoveCol = 0;
         for (int i = 0; i < board.length; i++) {
             count = 0;
             for (int j = 0; j < board[i].length; j++) {
-                if (isCol && board[i][j].equals(symbol))
+                if (isRow && board[i][j].equals(symbol))
                     count++;
-                else if (!isCol && board[j][i].equals(symbol))
+                else if (!isRow && board[j][i].equals(symbol))
                     count++;
                 else {
-                    possibleMoveRow = i;
-                    possibleMoveCol = j;
+                    if (isRow) {
+                        possibleMoveRow = i;
+                        possibleMoveCol = j;
+                    }
+                    else {
+                        possibleMoveRow = j;
+                        possibleMoveCol = i;
+                    }
                 }
                 if (count == 2 && j == board[i].length - 1 && openSpace(possibleMoveRow, possibleMoveCol)) {
                     placeMove(possibleMoveRow, possibleMoveCol, findMoveIndex(possibleMoveRow * board.length + possibleMoveCol), ":o:");
@@ -133,8 +139,14 @@ public class TicTacToe implements Serializable {
             else if (!isDiagNorm && board[i][board.length - 1 - i].equals(symbol))
                 count++;
             else {
-                possibleMoveRow = i;
-                possibleMoveCol = i;
+                if (isDiagNorm) {
+                    possibleMoveRow = i;
+                    possibleMoveCol = i;
+                }
+                else {
+                    possibleMoveRow = i;
+                    possibleMoveCol = board.length - 1 - i;
+                }
             }
             if (count == 2 && i == board.length - 1 && openSpace(possibleMoveRow, possibleMoveCol)) {
                 placeMove(possibleMoveRow, possibleMoveCol, findMoveIndex(possibleMoveRow * board.length + possibleMoveCol), ":o:");
