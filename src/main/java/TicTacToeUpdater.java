@@ -75,7 +75,6 @@ public class TicTacToeUpdater {
 		for (int i = 0; i < tttGames.size(); i++) {
 			if (tttGames.get(i).getPlayerID().equals(user.getId())) {
 				tttGames.remove(i);
-				i--;
 				return true;
 			}
 		}

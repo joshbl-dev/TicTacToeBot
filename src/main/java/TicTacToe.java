@@ -77,7 +77,8 @@ public class TicTacToe implements Serializable {
                         }
                     }
                 }
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e) {
                 return false;
             }
         }
