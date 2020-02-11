@@ -30,6 +30,10 @@ public class TicTacToe implements Serializable {
         for (int row = 0; row < board.length; row++) {
             System.arraycopy(NUM_TO_EMOJI, row * board.length, board[row], 0, board[row].length);
         }
+
+        if (Math.random() < .5) {
+            moveAI();
+        }
     }
 
     // accessors
@@ -172,14 +176,23 @@ public class TicTacToe implements Serializable {
     // plays the AI's move (currently random)
     public void moveAI() {
         if (movesLeft()) {
+            // try to win/block
             if (noNextTurnWin(":o:") && noNextTurnWin(":x:")) {
-                System.out.println("Moving bot randomly...");
-                int index = (int) (Math.random() * possibleMoves.size());
-                for (int row = 0; row < board.length; row++) {
-                    for (int col = 0; col < board[row].length; col++) {
-                        if (row * board.length + col == possibleMoves.get(index)) {
-                            placeMove(row, col, index, ":o:");
-                            return;
+                // try to go center
+                if (Math.random() < .5 && openSpace(1, 1)) {
+                    System.out.println("Moving bot center...");
+                    placeMove(1, 1, findMoveIndex(4), ":o:");
+                }
+                // else go randomly
+                else {
+                    System.out.println("Moving bot randomly...");
+                    int index = (int) (Math.random() * possibleMoves.size());
+                    for (int row = 0; row < board.length; row++) {
+                        for (int col = 0; col < board[row].length; col++) {
+                            if (row * board.length + col == possibleMoves.get(index)) {
+                                placeMove(row, col, index, ":o:");
+                                return;
+                            }
                         }
                     }
                 }

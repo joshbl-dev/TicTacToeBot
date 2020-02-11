@@ -121,7 +121,6 @@ public class TicTacToeUpdater {
 			}
 			else if (board.playMove(messagePhrases[2].toLowerCase())) {
 				if (board.checkWin(board.getMoveRow(), board.getMoveCol(), ":x:")) {
-					channel.sendMessage(board.toEmbed()).queue();
 					channel.sendMessage("<@" + author.getId() + "> has won TicTacToe!").queue();
 					removePlayerBoard(author);
 				}
@@ -132,8 +131,8 @@ public class TicTacToeUpdater {
 				}
 				else {
 					board.moveAI();
-					channel.sendMessage(board.toEmbed()).queue();
 					if (board.checkWin(board.getMoveRow(), board.getMoveCol(), ":o:")) {
+						channel.sendMessage(board.toEmbed()).queue();
 						channel.sendMessage( "Mehme has won TicTacToe against <@" + author.getId() + ">").queue();
 						removePlayerBoard(author);
 					}
@@ -142,6 +141,8 @@ public class TicTacToeUpdater {
 						channel.sendMessage("<@" + author.getId() + ">'s TicTacToe game ended in a tie!").queue();
 						removePlayerBoard(author);
 					}
+					else
+						channel.sendMessage(board.toEmbed()).queue();
 				}
 			}
 			else
