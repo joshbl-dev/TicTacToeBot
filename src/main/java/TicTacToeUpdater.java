@@ -155,6 +155,7 @@ public class TicTacToeUpdater {
 			}
 			else if (board.playMove(messagePhrases[2].toLowerCase())) {
 				if (board.checkWin(board.getMoveRow(), board.getMoveCol(), ":x:")) {
+					channel.sendMessage(board.toEmbed()).queue();
 					channel.sendMessage("<@" + author.getId() + "> has won TicTacToe!").queue();
 					removePlayerBoard(author);
 				}
