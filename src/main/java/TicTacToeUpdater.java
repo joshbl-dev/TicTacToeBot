@@ -16,6 +16,7 @@ public class TicTacToeUpdater {
 
 	private ArrayList<TicTacToe> tttGames;
 	private ScheduledExecutorService scheduledExecutorService;
+	private boolean saving;
 
 	public TicTacToeUpdater() {
 		onStart();
@@ -59,14 +60,17 @@ public class TicTacToeUpdater {
 		scheduledExecutorService = Executors.newScheduledThreadPool (1);
 		Runnable saveDataRunnable = () -> {
 				try {
-					System.out.println("\nNow saving bot data...");
-					FileOutputStream fileOutputStream = new FileOutputStream("src/MehmeData");
-					ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-					objectOutputStream.writeObject(tttGames);
-					System.out.println("Saved " + tttGames.size() + " TicTacToe games");
-					objectOutputStream.close();
-					fileOutputStream.close();
-					System.out.println("Completed saving bot data!\n");
+					if (saving) {
+						System.out.println("\nNow saving bot data...");
+						FileOutputStream fileOutputStream = new FileOutputStream("src/MehmeData");
+						ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+						objectOutputStream.writeObject(tttGames);
+						System.out.println("Saved " + tttGames.size() + " TicTacToe games");
+						objectOutputStream.close();
+						fileOutputStream.close();
+						System.out.println("Completed saving bot data!\n");
+						unqueueSaving();
+					}
 
 				} catch (IOException e) {
 					System.out.println(e.toString());
@@ -91,10 +95,23 @@ public class TicTacToeUpdater {
 		for (int i = 0; i < tttGames.size(); i++) {
 			if (tttGames.get(i).getPlayerID().equals(user.getId())) {
 				tttGames.remove(i);
+				queueSaving();
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	private void queueSaving() {
+		if (!saving) {
+			saving = true;
+			System.out.println("Saving queued");
+		}
+	}
+	
+	private void unqueueSaving() {
+		saving = false;
+		System.out.println("Saving unqueued");
 	}
 
 	// tictactoe message commands
@@ -122,6 +139,7 @@ public class TicTacToeUpdater {
 			if (board == null) {
 				channel.sendMessage("Creating game for <@" + author.getId() + ">").queue();
 				tttGames.add(board = new TicTacToe(author));
+				queueSaving();
 			}
 			else
 				channel.sendMessage("Game already created for <@" + author.getId() + ">").queue();
@@ -157,8 +175,10 @@ public class TicTacToeUpdater {
 						channel.sendMessage("<@" + author.getId() + ">'s TicTacToe game ended in a tie!").queue();
 						removePlayerBoard(author);
 					}
-					else
+					else {
+						queueSaving();
 						channel.sendMessage(board.toEmbed()).queue();
+					}
 				}
 			}
 			else
@@ -188,6 +208,7 @@ public class TicTacToeUpdater {
 					System.out.println("Removing all TicTacToe games");
 					channel.sendMessage("All TicTacToe games have been removed").queue();
 					tttGames = new ArrayList<>();
+					queueSaving();
 				}
 				else {
 					taggedMembers = event.getMessage().getMentionedMembers();

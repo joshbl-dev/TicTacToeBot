@@ -19,6 +19,7 @@ public class BotRunner extends ListenerAdapter {
         JDABuilder builder = new JDABuilder(args[0]);
         builder.addEventListeners(new BotRunner());
         builder.build();
+        System.out.println();
     }
 
     @Override
