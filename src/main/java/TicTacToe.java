@@ -83,6 +83,7 @@ public class TicTacToe implements Serializable {
                 }
             }
             catch (NumberFormatException e) {
+                System.out.println(e.toString());
                 return false;
             }
         }

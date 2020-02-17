@@ -27,9 +27,25 @@ public class TicTacToeUpdater {
 	private void onStart() {
 		try {
 			System.out.println("\nNow loading bot data...");
-			FileInputStream fileInputStream = new FileInputStream("src/main/MehmeData");
+			File srcFolder = new File("src");
+			if (!srcFolder.exists()) {
+				srcFolder.mkdir();
+			}
+			File dataFile = new File("src/MehmeData");
+			if (!dataFile.exists()) {
+				dataFile.createNewFile();
+				FileOutputStream fileOutputStream = new FileOutputStream("src/MehmeData");
+				ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(new ArrayList<TicTacToe>());
+				objectOutputStream.close();
+				fileOutputStream.close();
+			}
+			FileInputStream fileInputStream = new FileInputStream("src/MehmeData");
 			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+			System.out.println("MAde it to here");
 			tttGames = (ArrayList<TicTacToe>) objectInputStream.readObject();
+			if (tttGames == null)
+				tttGames = new ArrayList<>();
 			System.out.println("Loaded " + tttGames.size() + " TicTacToe games");
 			System.out.println("Completed loading bot data!\n");
 		}
@@ -42,22 +58,22 @@ public class TicTacToeUpdater {
 	private void startSaving() {
 		scheduledExecutorService = Executors.newScheduledThreadPool (1);
 		Runnable saveDataRunnable = () -> {
-			try {
-				System.out.println("\nNow saving bot data...");
-				FileOutputStream fileOutputStream = new FileOutputStream("src/main/MehmeData");
-				ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-				objectOutputStream.writeObject(tttGames);
-				System.out.println("Saved " + tttGames.size() + " TicTacToe games");
-				objectOutputStream.close();
-				fileOutputStream.close();
-				System.out.println("Completed saving bot data!\n");
+				try {
+					System.out.println("\nNow saving bot data...");
+					FileOutputStream fileOutputStream = new FileOutputStream("src/MehmeData");
+					ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+					objectOutputStream.writeObject(tttGames);
+					System.out.println("Saved " + tttGames.size() + " TicTacToe games");
+					objectOutputStream.close();
+					fileOutputStream.close();
+					System.out.println("Completed saving bot data!\n");
 
-			}
-			catch(IOException e) {
-				System.out.println(e.toString());
-			}
+				} catch (IOException e) {
+					System.out.println(e.toString());
+				}
 		};
 		scheduledExecutorService.scheduleAtFixedRate(saveDataRunnable, 10, 30, TimeUnit.SECONDS);
+
 	}
 
 	// finds player's board from list of ongoing games
